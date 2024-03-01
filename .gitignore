@@ -1,0 +1,9 @@
+**.csv
+**.html
+**.xlsx
+**.docx
+**.json
+**.pt
+.idea/
+data/
+models/
