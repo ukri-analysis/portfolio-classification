@@ -4,7 +4,7 @@
 
 ## Summary
 
-This repository includes all scripts needed to run thematic classification methodology described in [this paper](link) .
+This repository includes all scripts needed to run thematic classification methodology described in [this paper](https://www.ukri.org/publications/investment-portfolio-classification/) .
 
 
 
@@ -15,8 +15,8 @@ This user guide assumes you're following this methodology.
 The steps are:
 
 1. Creation of unique digital signatures for all awards
-2. Keyword list & Calculation of metric of similarity 
-3. Threshold determination 
+2. Keyword list & Calculation of metric of similarity
+3. Threshold determination
 
 
 
@@ -52,7 +52,7 @@ Outputs:
 
 
 
-### Keyword list & **Calculation of metric of similarity** 
+### Keyword list & **Calculation of metric of similarity**
 
 To query and rank the documents as described in step 2 and step 3 of the methodology, run the `query_model` function from the `code/query_documents.py` script. This process involves loading the pre-trained model and document metadata to evaluate similarity between the query and existing document embeddings.
 
@@ -77,9 +77,9 @@ Outputs: The function returns a pandas `DataFrame` with the following columns:
 
 
 
-### Threshold determination 
+### Threshold determination
 
-Selecting an optimal cut-off point (threshold) for similarity scores, to distinguish between documents that are relevant to the theme and those that are not, is achieved through a four-step process, utilising functions from the `code/threshold_sample.py` script. 
+Selecting an optimal cut-off point (threshold) for similarity scores, to distinguish between documents that are relevant to the theme and those that are not, is achieved through a four-step process, utilising functions from the `code/threshold_sample.py` script.
 
 **Step 1: Preliminary Sampling for Threshold Estimation**
 
@@ -123,7 +123,7 @@ Output:
 
 **Step 4: Final Threshold Calculation**
 
-After refining the sample set, run the `calculate_threshold` function again on the newly labelled samples to determine the final threshold. 
+After refining the sample set, run the `calculate_threshold` function again on the newly labelled samples to determine the final threshold.
 
 Arguments for the function remain the same as in Step 2, applied to the new set of labelled samples from the refined sampling process.
 
