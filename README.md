@@ -29,7 +29,7 @@ Required packages are described in [requirements.txt](filepath).
 
 ### Input data
 
-Input data must be formatted as a CSV file with only one column called `description` containing the text to model.
+Input data must be formatted as a CSV file. The text to analyse must be in a single column. Document identifiers and other metadata should be provided in additional columns. 
 
 
 
@@ -40,14 +40,14 @@ To create the unique digital signatures for all awards run `create_embeddings` f
 Arguments for the function are:
 
   - `data_path`: Path to your CSV dataset.
-  - `analysis_column`: The name of the column containing the text data - quoted?.
+  - `analysis_column`: The name of the column containing the text data.
   - `metadata_path`: Desired path for saving the metadata JSON file.
   - `embeddings_path`: Desired path for saving the generated embeddings.
   - `device`: Choose either a CPU or a GPU for speed. Use `device = torch.device("cuda")` if your system has CUDA-compatible NVIDIA GPU support. Otherwise, default to `device = torch.device("cpu")` for CPU processing. Ensure your `torch` installation supports CUDA if opting for GPU acceleration. Check [pytorch documentation](link) for detail.
 
 Outputs:
 
-  - A JSON file containing metadata from your dataset. Which provides a reference to your original data.
+  - A JSON file containing metadata from your dataset.
   - A PyTorch tensor file (`.pt`) with the generated embeddings.
 
 
@@ -67,13 +67,11 @@ Arguments for the function are:
 Outputs: The function returns a pandas `DataFrame` with the following columns:
 
   - `rank`: The ranking of documents based on relevance.
-  - `reference`: A unique reference for the document.
-  - `funder`: The document's funder information.
-  - `title`: The title of the document.
-  - `description`: The text content of the document used for training.
   - `word_count`: The count of words in the document's text.
   - `warning`: A warning if the document's text is below a certain word count threshold.
   - `distance`: The cosine similarity distance, indicating how similar the document is to the query.
+
+  As well as all user supplied columns in the csv file passed to `create_embeddings`.  
 
 
 
