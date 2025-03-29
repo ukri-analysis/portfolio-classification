@@ -123,16 +123,18 @@ def query_model(query, metadata_path, embeddings_path, device='cpu'):
             continue  # Skip the loop iteration if the document's metadata is missing
 
         doc_metadata = metadata[str_idx]
-        results.append({
+        results_dict = {
             "rank": rank + 1,
-            "reference": doc_metadata.get("award_reference", "N/A"),
-            "funder": doc_metadata.get("owner", "N/A"),
-            "title": doc_metadata.get("application_title", "N/A"),
-            "training_data": doc_metadata.get("training_text", "N/A"),
-            "word_count": len(doc_metadata.get("training_text", "").split()),
-            "warning": "WARNING" if len(doc_metadata.get("training_text", "").split()) <= 20 else "",
             "distance": distances[rank]  # Access the similarity distance for the ranked document
-        })
+        }
+        
+        keys = np.array(list(doc_metadata.keys())) 
+        include = np.array([field not in ["Unnamed: 0"] for field in keys])
+        keys = keys[include]
+        for field in keys:
+            results_dict[str(field)] = doc_metadata.get(field, "N/A")
+
+        results.append(results_dict)
 
     # Transform the list of results into a DataFrame for easier handling and display
     df_results = pd.DataFrame(results)
