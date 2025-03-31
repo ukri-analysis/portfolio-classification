@@ -1,4 +1,5 @@
 import pandas as pd  # Third party imports
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 
@@ -40,6 +41,13 @@ def create_stratified_samples(dataframe, num_strata=10, num_samples_per_stratum=
     samples.drop(columns=['distance_interval'], inplace=True)
     # Shuffle samples for randomness
     shuffled_samples = samples.sample(frac=1).reset_index(drop=True)
+
+    # the sampling on intervals of score can return fewer than min samples
+    # warn where this happens
+    check_bin_sizes = np.array(dataframe["distance_interval"].value_counts()) > 3
+    if not all(check_bin_sizes):
+        print(f"""Warning: Some intervals contain fewer than {num_samples_per_stratum} projects.
+Only {shuffled_samples.shape[0]} projects are returned not {num_samples_per_stratum*num_strata}.""")
 
     return shuffled_samples
 
