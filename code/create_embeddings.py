@@ -101,6 +101,18 @@ def load_data(filepath, analysis_column):
     # Drop rows with empty (after cleaning) analysis column values
     df = df[df[analysis_column].str.strip() != '']
 
+    # add some metadata relating to warnings
+    df["word_count"] = df[analysis_column].str.count(" ")
+    df["word_count"] = df["word_count"]+1
+    df['warning'] = np.select(
+    [
+        df["word_count"].between(0, 20, inclusive = "both") 
+    ], 
+    [
+        "WARNING", 
+    ], 
+    default="")
+
     return df.reset_index(drop=True)
 
 

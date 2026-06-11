@@ -1,4 +1,5 @@
 import pandas as pd  # Third party imports
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 
@@ -7,7 +8,7 @@ def create_stratified_samples(dataframe, num_strata=10, num_samples_per_stratum=
     Creates stratified samples from a dataframe based on the 'distance' column and adds a 'relevance' column
     for user labeling.
 
-    This function divides the 'distance' into quantiles for stratified sampling, adds a 'relevance' column for
+    This function bins the 'distance' for stratified sampling, adds a 'relevance' column for
     user labeling, and saves the samples to a CSV file.
 
     Parameters:
@@ -26,7 +27,7 @@ def create_stratified_samples(dataframe, num_strata=10, num_samples_per_stratum=
     dataframe['relevance'] = None  # Placeholder for user labeling
 
     # Create quantile-based strata for 'distance'
-    dataframe['distance_interval'] = pd.qcut(dataframe['distance'], q=num_strata, labels=False, duplicates='drop')
+    dataframe['distance_interval'] = pd.cut(dataframe['distance'], bins=num_strata, labels=False, duplicates='drop')
 
     samples = pd.DataFrame()  # Initialize dataframe to hold samples
 
@@ -41,8 +42,13 @@ def create_stratified_samples(dataframe, num_strata=10, num_samples_per_stratum=
     # Shuffle samples for randomness
     shuffled_samples = samples.sample(frac=1).reset_index(drop=True)
 
-    # Save the shuffled samples to a CSV file, including the 'relevance' column for labeling
-    shuffled_samples.to_csv("sample_output.csv", index=False)
+    # the sampling on intervals of score can return fewer than min samples
+    # warn where this happens
+    check_bin_sizes = np.array(dataframe["distance_interval"].value_counts()) > 3
+    if not all(check_bin_sizes):
+        print(f"""Warning: Some intervals contain fewer than {num_samples_per_stratum} projects.
+Only {shuffled_samples.shape[0]} projects are returned not {num_samples_per_stratum*num_strata}.""")
+
     return shuffled_samples
 
 
@@ -102,7 +108,7 @@ def refined_sampling(dataframe, threshold, num_strata=10, num_samples_per_stratu
     # Filter the dataframe for distances within the specified range around the threshold, allowing negative values
     threshold_min = threshold - 0.05
     threshold_max = threshold + 0.05
-    filtered_df = dataframe[(dataframe['distance'] >= threshold_min) & (dataframe['distance'] <= threshold_max)]
+    filtered_df = dataframe[(dataframe['distance'] >= threshold_min) & (dataframe['distance'] <= threshold_max)].copy()
 
     # Use the initial stratified sampling function on the filtered dataframe
     return create_stratified_samples(filtered_df, num_strata, num_samples_per_stratum)
